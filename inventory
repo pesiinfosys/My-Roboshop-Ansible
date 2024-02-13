@@ -1,0 +1,8 @@
+[mongodb]
+mongodb.cloudevops.cloud
+
+[catalogue]
+catalogue.cloudevops.cloud
+
+[web]
+web.cloudevops.cloud
