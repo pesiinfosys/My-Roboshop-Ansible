@@ -1,0 +1,47 @@
+---
+- name: Setting Up MongoDB Server For Roboshop Project
+  hosts: web
+  become: yes
+  tasks:
+  - name: Installing Nginx
+    ansible.builtin.yum:
+      name: nginx 
+      state: installed
+
+  - name: Enable and Starting nginx service
+    ansible.builtin.service:
+      name: nginx
+      state: started
+      enabled: yes
+
+  - name: Removing html directory
+    ansible.builtin.file:
+      path: /usr/share/nginx/html/
+      state: absent
+
+  - name: Creating html directory
+    ansible.builtin.file:
+      path: /usr/share/nginx/html/
+      state: present
+
+  - name: Downloading Application Code
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/web.zip
+      dest: /tmp/web.zip
+
+  - name: Unarchive web.zip
+    ansible.builtin.unarchive:
+      src: /tmp/web.zip
+      dest: /usr/share/nginx/html
+      remote_src: yes
+
+  - name: Create Nginx Reverse Proxy Configuration
+    ansible.builtin.copy:
+      src: roboshop.conf
+      dest: /etc/nginx/default.d/roboshop.conf
+
+  - name: Restarting nginx service
+    ansible.builtin.service:
+      name: nginx
+      state: restarted
+  
