@@ -22,7 +22,7 @@
   - name: Creating html directory
     ansible.builtin.file:
       path: /usr/share/nginx/html/
-      state: present
+      state: directory
 
   - name: Downloading Application Code
     ansible.builtin.get_url:
