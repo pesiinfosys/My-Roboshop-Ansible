@@ -1,0 +1,74 @@
+---
+- name: Setting Up MongoDB Server For Roboshop Project
+  hosts: catalogue
+  become: yes
+  tasks:
+  - name: Setup NodeJS Repo
+    ansible.builtin.shell: "curl -sL https://rpm.nodesource.com/setup_lts.x | bash"
+
+  - name: Installing NodeJS
+    ansible.builtin.yum:
+      name: nodejs 
+      state: installed
+
+  - name: Checking System User
+    ansible.builtin.shell: id roboshop
+    register: out
+    ignore_errors: yes
+
+  - name: Creating System User
+    ansible.builtin.user:
+      name: roboshop
+    when: out.rc != 0
+
+  - name: Creating app Directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+
+  - name: Downloading Application Code
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+      dest: /tmp/catalogue.zip
+
+  - name: Unarchive catalogue.zip file
+    ansible.builtin.unarchive:
+      src: /tmp/catalogue.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Installing Dependencies
+    ansible.builtin.shell: npm install
+    args:
+      chdir: /app
+
+  - name: Copying catalogue.service file
+    ansible.builtin.copy:
+      src: catalogue.service
+      dest: /etc/systemd/system/catalogue.service
+
+  - name: load Systemd service
+    ansible.builtin.systemd_service:
+      name: catalogue.service
+      state: reloaded
+
+  - name: enable and starting catalogue service
+    ansible.builtin.service:
+      name: catalogue
+      state: started
+
+  - name: Copying mongo.repo file
+    ansible.builtin.copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+
+  - name: Installing mongodb client
+    ansible.builtin.yum:
+      name: mongodb-org-shell
+      state: installed
+
+  - name: loading schema
+    ansible.builtin.shell: mongo --host mongodb.cloudevops.cloud < /app/schema/catalogue.js
+
+
+  
