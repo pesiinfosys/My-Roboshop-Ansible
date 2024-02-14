@@ -1,6 +1,6 @@
 ---
 - name: Setting Up RabbitMQ Server For Roboshop Project
-  hosts: user
+  hosts: rabbitmq
   become: yes
   tasks:
   - name: Configure YUM Repos

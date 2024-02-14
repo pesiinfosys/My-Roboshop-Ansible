@@ -21,3 +21,6 @@ mysql.cloudevops.cloud
 
 [shipping]
 shipping.cloudevops.cloud
+
+[rabbitmq]
+rabbitmq.cloudevops.cloud
