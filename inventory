@@ -12,3 +12,6 @@ redis.cloudevops.cloud
 
 [user]
 user.cloudevops.cloud
+
+[cart]
+cart.cloudevops.cloud
