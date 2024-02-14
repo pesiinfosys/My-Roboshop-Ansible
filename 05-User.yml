@@ -71,5 +71,8 @@
   - name: loading schema
     ansible.builtin.shell: mongo --host mongodb.cloudevops.cloud < /app/schema/user.js
 
-
+  - name: Re-starting user service
+    ansible.builtin.service:
+      name: user
+      state: restarted
   
