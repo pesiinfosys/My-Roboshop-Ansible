@@ -24,3 +24,6 @@ shipping.cloudevops.cloud
 
 [rabbitmq]
 rabbitmq.cloudevops.cloud
+
+[payment]
+payment.cloudevops.cloud

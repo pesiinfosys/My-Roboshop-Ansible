@@ -1,0 +1,13 @@
+---
+- name: Setting Up Payment Server For Roboshop Project
+  hosts: payment
+  become: yes
+  tasks:
+  - name: Install Python 3.6
+    ansible.builtin.yum:
+      name: "{{item}}"
+      state: installed
+    loop:
+    - python36
+    - gcc
+    - python3-devel
