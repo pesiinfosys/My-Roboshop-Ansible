@@ -11,3 +11,53 @@
     - python36
     - gcc
     - python3-devel
+
+  - name: Checking System User
+    ansible.builtin.shell: id roboshop
+    register: out
+    ignore_errors: yes
+
+  - name: Creating System User
+    ansible.builtin.user:
+      name: roboshop
+    when: out.rc != 0
+
+  - name: Creating app Directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+
+  - name: Downloading Application Code
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/payment.zip
+      dest: /tmp/payment.zip
+
+  - name: Unarchive payment.zip file
+    ansible.builtin.unarchive:
+      src: /tmp/payment.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Installing Dependencies
+    ansible.builtin.shell: pip3.6 install -r requirements.txt
+    args:
+      chdir: /app
+
+  - name: Copying payment.service file
+    ansible.builtin.copy:
+      src: payment.service
+      dest: /etc/systemd/system/payment.service
+
+  - name: load Systemd service
+    ansible.builtin.systemd_service:
+      name: payment.service
+      state: reloaded
+    ignore_errors: yes
+
+  - name: enable and starting user service
+    ansible.builtin.service:
+      name: payment
+      state: started
+      enabled: yes
+
+  
