@@ -6,3 +6,6 @@ catalogue.cloudevops.cloud
 
 [web]
 web.cloudevops.cloud
+
+[redis]
+redis.cloudevops.cloud
