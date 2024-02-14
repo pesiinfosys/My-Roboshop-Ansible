@@ -9,3 +9,6 @@ web.cloudevops.cloud
 
 [redis]
 redis.cloudevops.cloud
+
+[user]
+user.cloudevops.cloud

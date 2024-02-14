@@ -1,5 +1,5 @@
 ---
-- name: Setting Up MongoDB Server For Roboshop Project
+- name: Setting Up Web Server For Roboshop Project
   hosts: web
   become: yes
   tasks:
