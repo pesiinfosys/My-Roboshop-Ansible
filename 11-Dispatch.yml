@@ -1,0 +1,62 @@
+---
+- name: Setting Up Dispatch Server For Roboshop Project
+  hosts: payment
+  become: yes
+  tasks:
+  - name: Install GoLang
+    ansible.builtin.yum:
+      name: golang
+      state: installed
+
+  - name: Checking System User
+    ansible.builtin.shell: id roboshop
+    register: out
+    ignore_errors: yes
+
+  - name: Creating System User
+    ansible.builtin.user:
+      name: roboshop
+    when: out.rc != 0
+
+  - name: Creating app Directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+
+  - name: Downloading Application Code
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/dispatch.zip
+      dest: /tmp/dispatch.zip
+
+  - name: Unarchive dispatch.zip file
+    ansible.builtin.unarchive:
+      src: /tmp/dispatch.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Installing Dependencies
+    ansible.builtin.shell: |
+      go mod init dispatch
+      go get
+      go build
+    args:
+      chdir: /app
+
+  - name: Copying dispatch.service file
+    ansible.builtin.copy:
+      src: dispatch.service
+      dest: /etc/systemd/system/dispatch.service
+
+  - name: load Systemd service
+    ansible.builtin.systemd_service:
+      name: dispatch.service
+      state: reloaded
+    ignore_errors: yes
+
+  - name: enable and starting dispatch service
+    ansible.builtin.service:
+      name: dispatch
+      state: started
+      enabled: yes
+
+
