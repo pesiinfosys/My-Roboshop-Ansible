@@ -11,7 +11,7 @@
       name: nodejs 
       state: installed
 
-  - name: Checking System cart
+  - name: Checking System User
     ansible.builtin.shell: id roboshop
     register: out
     ignore_errors: yes
